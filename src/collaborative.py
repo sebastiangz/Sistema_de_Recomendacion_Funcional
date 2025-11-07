@@ -1,5 +1,5 @@
 """
-collaborative_filtering_v2.py
+collaborative_filtering.py
 
 Diseñado bajo los principios de:
 - Funciones puras: sin efectos secundarios ni dependencias externas.
