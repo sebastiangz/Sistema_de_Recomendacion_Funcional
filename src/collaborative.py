@@ -206,3 +206,4 @@ def item_based_recommend(mat: pd.DataFrame, user_id, n_recs: int = 5) -> List[Tu
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     return ranked[:n_recs]
 
+
