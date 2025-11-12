@@ -8,7 +8,7 @@ Diseñado bajo los principios de:
 
 Autor: David [Proyecto 9 - Sistema de Recomendación Laboral Inteligente]
 """
-
+from matrix_factorization import svd_recommend
 from typing import Tuple, List, Optional, Dict
 import numpy as np
 import pandas as pd
@@ -203,23 +203,6 @@ def item_based_recommend(mat: pd.DataFrame, user_id, n_recs: int = 5) -> List[Tu
         if denom > 0:
             scores[item] = numer / denom
 
-    ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    return ranked[:n_recs]
-
-
-def svd_recommend(mat: pd.DataFrame, user_id, n_components: int = 10, n_recs: int = 5) -> List[Tuple[object, float]]:
-    """
-    Genera recomendaciones mediante descomposición en valores singulares (SVD).
-    Este método identifica relaciones latentes entre usuarios e ítems.
-    """
-    A = mat.values.astype(float)
-    U, s, Vt = np.linalg.svd(A, full_matrices=False)
-    k = min(n_components, len(s))
-    pred = (U[:, :k] * s[:k]) @ Vt[:k, :]
-    pred_df = pd.DataFrame(pred, index=mat.index, columns=mat.columns)
-    user_orig = mat.loc[user_id]
-    candidate_items = user_orig[user_orig == 0].index
-    scores = {item: float(pred_df.at[user_id, item]) for item in candidate_items}
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     return ranked[:n_recs]
 
