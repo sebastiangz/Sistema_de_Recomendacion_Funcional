@@ -12,6 +12,7 @@ Casos de uso específicos: Este Proyecto tiene la intención de poder ser usado 
 
 
 Propuesta de Valor
+
 Nuestro sistema de recomendación laboral inteligente tiene como objetivo optimizar los procesos de reclutamiento, ayudando a las empresas a encontrar trabajadores que se ajusten mejor a sus necesidades.
 Utiliza programación funcional y algoritmos de filtrado colaborativo, content-based filtering y machine learning funcional, garantizando recomendaciones precisas, consistentes y sin modificar los datos originales.
 El valor principal del proyecto está en ahorrar tiempo y recursos durante la búsqueda de talento, mejorando la coincidencia entre el perfil del candidato y los requerimientos de la empresa.
