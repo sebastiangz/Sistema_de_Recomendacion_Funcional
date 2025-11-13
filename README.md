@@ -4,6 +4,13 @@
 
 Sistema de recomendación implementado con programación funcional, utilizando filtrado colaborativo, content-based filtering y algoritmos de ML funcionales para generar recomendaciones personalizadas.
 
+Descripción de NUESTRO proyecto: El proyecto de nuestro equipo tiene como objetivo el servir como un sistema de 
+recomendación, el cual servirá para encontrar y recomendar a trabajadores con base en ciertas características, como por ejemplo: Departmento, Título, Fecha de Contratación, Localización, Rating de desempeño, Años de experiencia, Status, Modo de trabajo, Salario INR.
+
+Casos de uso específicos: Este Proyecto tiene la intención de poder ser usado por empresas que buscan a trabajadores con ciertas competencias; si quisieramos que el proyecto fuera a la viceversa, ocuparíamos tener un banco de datos diferente en el que en lugar de tener a trabajadores, tuvieramos datos de empresas.
+
+
+
 **Universidad de Colima - Ingeniería en Computación Inteligente**  
 **Materia**: Programación Funcional  
 **Profesor**: Gonzalez Zepeda Sebastian  
@@ -39,8 +46,8 @@ Sistema de recomendación implementado con programación funcional, utilizando f
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/recommendation-system-functional.git
-cd recommendation-system-functional
+git clone https://github.com/sebastiangz/Sistema_de_Recomendacion_Funcional.git
+cd SISTEMA_DE_RECOMENDACION_FUNCIONAL
 
 # Crear entorno virtual
 python -m venv venv
@@ -531,10 +538,12 @@ pytest tests/test_performance.py
 
 ## 📚 Referencias
 
-- Ricci, F., et al. (2015). *Recommender Systems Handbook*
-- **Surprise Library**: https://surpriselib.com/
-- **Implicit**: https://github.com/benfred/implicit
-- Netflix Prize papers
+-Ricci, F., Rokach, L., & Shapira, B. (2015). Recommender Systems Handbook (2nd ed.). Springer. 
+ https://doi.org/10.1007/978-1-4899-7637-6
+-Koren, Y., Bell, R., & Volinsky, C. (2009). Matrix factorization techniques for recommender systems. 
+ Computer, 42(8), 30-37. https://doi.org/10.1109/MC.2009.263
+-Sarwar, B., Karypis, G., Konstan, J., & Riedl, J. (2001). Item-based collaborative filtering 
+ recommendation algorithms. In Proceedings of the 10th International Conference on World Wide Web (pp. 285-295). ACM.
 
 ---
 
@@ -549,9 +558,20 @@ pytest tests/test_performance.py
 
 ## 👥 Autor
 
-**Nombre**: [Tu Nombre]  
-**Email**: [tu-email@ucol.mx]  
-**GitHub**: [@tu-usuario](https://github.com/tu-usuario)
+**Nombres**: 
+David Isaac Avalos Díaz
+Osmar Antonio Isais Virgen
+
+**Email**: 
+osmarisais57@gmail.com 
+diegoalxdiaz@outlook.com  
+davalos16@ucol.mx
+
+**GitHub**: 
+https://github.com/ninja-1-droid
+https://github.com/Daxed64
+https://github.com/osmar433
+
 
 ---
 
