@@ -126,6 +126,3 @@ def svd_rmse(mat: pd.DataFrame, pred_df: pd.DataFrame) -> float:
     return float(np.sqrt(mse))
 
 
-# Si deseas usar esta implementación en collaborative_filtering.py:
-# - Importar: from .matrix_factorization import svd_recommend
-# - Y reemplazar la implementación o invocar esta función desde allí.
