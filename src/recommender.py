@@ -1,14 +1,8 @@
 """
-recommender.py (versión funcional)
-Sistema de recomendación completamente funcional (sin POO).
-
-Expone fábricas de recomendadores:
-- create_collaborative_filter()
-- create_content_based()
-- create_hybrid_recommender()
+recommender.py - Sistema de recomendación completamente funcional (sin POO).
 """
 
-from typing import Callable, Dict, Tuple, List
+from typing import Callable, Dict, List, Tuple
 import pandas as pd
 
 from .collaborative import (
@@ -16,22 +10,21 @@ from .collaborative import (
     user_based_recommend,
     svd_recommend
 )
-
 from .content_based import create_content_model
-from .hybrid import HybridRecommender
+from .hybrid import hybrid_recommend
 
 
 # ============================================================
-# FABRICAS FUNCIONALES DE MODELOS DE RECOMENDACIÓN
+# FÁBRICAS FUNCIONALES DE RECOMENDADORES
 # ============================================================
 
-def create_collaborative_filter(method: str = "user") -> Dict[str, Callable]:
+def create_collaborative_filter(method: str = "user"):
     """
-    Fábrica de recomendador colaborativo funcional.
-
-    Retorna un diccionario inmutable con una función "fit" interna.
+    Retorna una función fit(df, user_col, item_col) que produce
+    una función recommend(user_id, n_items).
     """
     def fit(df: pd.DataFrame, user_col: str, item_col: str):
+
         mat, _, _ = build_user_item_matrix(df, user_col, item_col)
 
         def recommend(user_id, n_items=5):
@@ -39,14 +32,14 @@ def create_collaborative_filter(method: str = "user") -> Dict[str, Callable]:
                 return svd_recommend(mat, user_id, n_recs=n_items)
             return user_based_recommend(mat, user_id, n_recs=n_items)
 
-        return {"recommend": recommend}
+        return recommend  # función pura, sin estados mutables
 
-    return {"fit": fit}
+    return fit
 
 
-def create_content_based(feature_columns: List[str]) -> Dict[str, Callable]:
+def create_content_based(feature_columns: List[str]):
     """
-    Fábrica de filtrado basado en contenido (funcional).
+    Retorna una función fit(items_df) -> recommend(item_id, k)
     """
     def fit(items_df: pd.DataFrame):
         model = create_content_model(items_df, feature_columns)
@@ -54,27 +47,36 @@ def create_content_based(feature_columns: List[str]) -> Dict[str, Callable]:
         def recommend(item_id, k=5):
             return model.find_similar_items(item_id, k)
 
-        return {"recommend": recommend, "model": model}
+        return recommend
 
-    return {"fit": fit}
+    return fit
 
 
 def create_hybrid_recommender(
-    collaborative_model: Dict[str, Callable],
-    content_model: Dict[str, Callable],
+    collab_recommend_fn: Callable,
+    content_recommend_fn: Callable,
     weights: Tuple[float, float] = (0.7, 0.3)
-) -> Dict[str, Callable]:
+):
     """
-    Fábrica de recomendador híbrido funcional.
-    El resultado combina resultados colaborativos y de contenido.
+    Retorna una función recommend(user_id, n_items) combinando
+    recomendaciones colaborativas y basadas en contenido.
     """
-    hybrid = HybridRecommender(
-        collaborative=collaborative_model,
-        content_based=content_model.get("model"),
-        weights=weights
-    )
 
     def recommend(user_id, n_items=10):
-        return hybrid.recommend(user_id, n_items)
 
-    return {"recommend": recommend}
+        def content_sim(item_id):
+            sims = content_recommend_fn(item_id, k=3)
+            if not sims:
+                return 0.0
+            return float(sum(score for _, score in sims) / len(sims))
+
+        return hybrid_recommend(
+            collab_recommender=collab_recommend_fn,
+            content_sim_fn=content_sim,
+            user_id=user_id,
+            n=n_items,
+            w_collab=weights[0],
+            w_content=weights[1],
+        )
+
+    return recommend

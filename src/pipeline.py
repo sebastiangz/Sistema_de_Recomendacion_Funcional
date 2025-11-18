@@ -1,24 +1,33 @@
 """
-pipeline.py
-Define pipelines composables de recomendación funcional.
+pipeline.py 
+No utiliza clases ni estado mutante.
 """
 
-from dataclasses import dataclass
-
-@dataclass(frozen=True)
-class RecommendationPipeline:
-    model: object
-
-    def fit(self, *args, **kwargs):
-        return self.model  # inmutable, no entrenamiento destructivo
-
-    def recommend(self, user_id: int, n_items: int = 10):
-        return self.model.recommend(user_id, n_items)
+from typing import Callable, Any, List, Tuple
+from .hybrid import hybrid_recommend
 
 
-def create_recommendation_pipeline(collaborative, content_based, weights=(0.7, 0.3)):
-    """Crea un sistema híbrido funcionalmente."""
-    from .hybrid import HybridRecommender
-    return RecommendationPipeline(
-        HybridRecommender(collaborative, content_based, weights)
-    )
+def create_pipeline(
+    collab_fn: Callable[[Any, int], List[Tuple[Any, float]]],
+    content_fn: Callable[[Any], List[Tuple[Any, float]]],
+    weights: tuple[float, float] = (0.7, 0.3)
+):
+    """
+    Crea una función de recomendación híbrida lista para usar.
+
+    Retorna:
+        recommend_fn(user_id, n_items) -> recomendaciones híbridas
+    """
+    w_collab, w_content = weights
+
+    def recommend_fn(user_id: Any, n_items: int = 10):
+        return hybrid_recommend(
+            collab_recommender=collab_fn,
+            content_sim_fn=content_fn,
+            user_id=user_id,
+            n=n_items,
+            w_collab=w_collab,
+            w_content=w_content
+        )
+
+    return recommend_fn
