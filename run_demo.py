@@ -1,84 +1,60 @@
 """
-run_demo.py - Ejecución de demostración para el sistema de recomendación.
-Este script muestra cómo utilizar los recomendadores colaborativo,
-basado en contenido y el híbrido mediante los módulos ya implementados.
+run_demo.py - DEMO del Sistema de Recomendación Funcional
+Usa el dataset real HR_Data_MNC_Data Science Lovers.csv
 """
 
 import pandas as pd
 from src.recommender import (
     create_collaborative_filter,
     create_content_based,
-    create_hybrid_recommender,
+    create_hybrid_recommender
 )
-from src.pipeline import create_pipeline
 
+# =========================================================
+# Configuración del dataset del proyecto
+# =========================================================
+DATASET_PATH = "HR_Data_MNC_Data Science Lovers.csv"
 
-def main():
-    # -------------------------------------------------------------
-    # Datos de ejemplo
-    # -------------------------------------------------------------
-    ratings_df = pd.DataFrame({
-        "user": ["U1", "U1", "U2", "U3"],
-        "item": ["A", "B", "A", "C"],
-        "rating": [5, 3, 4, 2]
-    })
+user_col = "Employee_ID"
+item_col = "Job_Title"
+text_cols = ["Location", "Performance_Rating", "Experience_Years", "Status", "Work_Mode"]
 
-    items_df = pd.DataFrame({
-        "title": ["Python Dev", "Data Scientist", "Java Engineer"],
-        "desc": [
-            "backend python developer",
-            "machine learning python data",
-            "java spring backend"
-        ]
-    }, index=["A", "B", "C"])
+# =========================================================
+# Cargar datos
+# =========================================================
+print("\n===== DEMO DEL SISTEMA DE RECOMENDACIÓN =====\n")
 
-    # -------------------------------------------------------------
-    # Crear recomendadores individuales
-    # -------------------------------------------------------------
-    # Filtro colaborativo (usuario-usuario o SVD)
-    collab_fit = create_collaborative_filter(method="user")
-    collab_recommend = collab_fit(ratings_df, "user", "item")
+df = pd.read_csv(DATASET_PATH)
 
-    # Basado en contenido
-    content_fit = create_content_based(["title", "desc"])
-    content_recommend = content_fit(items_df)
+# Filtrar solo registros donde existan usuario e ítem
+df = df[[user_col, item_col] + text_cols].dropna()
 
-    # Híbrido
-    hybrid = create_hybrid_recommender(
-        collab_recommend,
-        content_recommend,
-        weights=(0.7, 0.3)
-    )
+# Elegir un usuario para demo
+example_user = df[user_col].iloc[0]
+print(f"Usuario objetivo: {example_user}\n")
 
-    # -------------------------------------------------------------
-    # Crear pipeline unificado
-    # -------------------------------------------------------------
-    pipeline = create_pipeline(
-        collab_recommend,
-        content_recommend,
-        weights=(0.6, 0.4)
-    )
+# =========================================================
+# 1) Recomendación Colaborativa (SVD)
+# =========================================================
+collab = create_collaborative_filter(method="svd")["fit"](df, user_col, item_col)
+print("--- Recomendaciones colaborativas (SVD) ---")
+print(collab["recommend"](example_user, 5))
 
-    # -------------------------------------------------------------
-    # Demostración
-    # -------------------------------------------------------------
-    user_id = "U1"
+# =========================================================
+# 2) Recomendación Basada en Contenido
+# =========================================================
+# Creamos un DataFrame de items (puesto → atributos)
+items = df.set_index(item_col)[text_cols]
 
-    print("===== DEMO DEL SISTEMA DE RECOMENDACIÓN =====")
-    print(f"Usuario objetivo: {user_id}\n")
+content = create_content_based(text_cols)["fit"](items)
+print("\n--- Recomendaciones basadas en contenido ---")
+print(content["recommend"](items.index[0], 5))
 
-    print("--- Recomendaciones colaborativas ---")
-    print(collab_recommend(user_id, 3))
+# =========================================================
+# 3) Recomendación Híbrida
+# =========================================================
+hybrid = create_hybrid_recommender(collab, content)
+print("\n--- Recomendaciones híbridas ---")
+print(hybrid["recommend"](example_user, 5))
 
-    print("\n--- Recomendaciones basadas en contenido (item 'A') ---")
-    print(content_recommend("A", 3))
-
-    print("\n--- Recomendaciones híbridas ---")
-    print(hybrid(user_id, 3))
-
-    print("\n--- Pipeline unificado ---")
-    print(pipeline(user_id, 3))
-
-
-if __name__ == "__main__":
-    main()
+print("\n===== FIN DEMO =====\n")
