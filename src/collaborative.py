@@ -1,5 +1,5 @@
 """
-collaborative_filtering.py
+collaborative.py
 
 Diseñado bajo los principios de:
 - Funciones puras: sin efectos secundarios ni dependencias externas.
@@ -8,7 +8,7 @@ Diseñado bajo los principios de:
 
 Autor: David [Proyecto 9 - Sistema de Recomendación Laboral Inteligente]
 """
-from matrix_factorization import svd_recommend
+from .matrix_factorization import svd_recommend
 from typing import Tuple, List, Optional, Dict
 import numpy as np
 import pandas as pd

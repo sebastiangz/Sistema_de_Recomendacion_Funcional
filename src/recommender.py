@@ -1,70 +1,80 @@
 """
-recommender.py
+recommender.py (versión funcional)
+Sistema de recomendación completamente funcional (sin POO).
 
-Interfaz principal del Sistema de Recomendación Funcional.
-Combina filtrado colaborativo, basado en contenido y métodos híbridos.
+Expone fábricas de recomendadores:
+- create_collaborative_filter()
+- create_content_based()
+- create_hybrid_recommender()
 """
 
-from typing import List, Tuple
+from typing import Callable, Dict, Tuple, List
 import pandas as pd
+
 from .collaborative import (
     build_user_item_matrix,
     user_based_recommend,
-    item_based_recommend,
     svd_recommend
 )
+
 from .content_based import create_content_model
 from .hybrid import HybridRecommender
 
 
-class CollaborativeFilter:
+# ============================================================
+# FABRICAS FUNCIONALES DE MODELOS DE RECOMENDACIÓN
+# ============================================================
+
+def create_collaborative_filter(method: str = "user") -> Dict[str, Callable]:
     """
-    Recomendador basado en filtrado colaborativo.
-    Soporta: user-based, item-based, y SVD.
+    Fábrica de recomendador colaborativo funcional.
+
+    Retorna un diccionario inmutable con una función "fit" interna.
     """
-    def __init__(self, method: str = "user"):
-        self.method = method
-        self.mat = None
+    def fit(df: pd.DataFrame, user_col: str, item_col: str):
+        mat, _, _ = build_user_item_matrix(df, user_col, item_col)
 
-    def fit(self, df: pd.DataFrame, user_col: str, item_col: str, rating_col: str = None):
-        self.mat, _, _ = build_user_item_matrix(df, user_col, item_col, rating_col)
-        return self
+        def recommend(user_id, n_items=5):
+            if method == "svd":
+                return svd_recommend(mat, user_id, n_recs=n_items)
+            return user_based_recommend(mat, user_id, n_recs=n_items)
 
-    def recommend(self, user_id, n_items: int = 5) -> List[Tuple[object, float]]:
-        if self.method == "user":
-            return user_based_recommend(self.mat, user_id, n_recs=n_items)
-        elif self.method == "item":
-            return item_based_recommend(self.mat, user_id, n_recs=n_items)
-        elif self.method == "svd":
-            return svd_recommend(self.mat, user_id, n_recs=n_items)
-        else:
-            raise ValueError(f"Método desconocido: {self.method}")
+        return {"recommend": recommend}
+
+    return {"fit": fit}
 
 
-class ContentBased:
+def create_content_based(feature_columns: List[str]) -> Dict[str, Callable]:
     """
-    Recomendador basado en contenido (TF-IDF + similitud de coseno).
+    Fábrica de filtrado basado en contenido (funcional).
     """
-    def __init__(self, text_columns: List[str]):
-        self.text_columns = text_columns
-        self.model = None
+    def fit(items_df: pd.DataFrame):
+        model = create_content_model(items_df, feature_columns)
 
-    def fit(self, items_df: pd.DataFrame):
-        self.model = create_content_model(items_df, self.text_columns)
-        return self
+        def recommend(item_id, k=5):
+            return model.find_similar_items(item_id, k)
 
-    def find_similar_items(self, item_id, k: int = 10):
-        if self.model is None:
-            raise RuntimeError("El modelo no ha sido entrenado con fit().")
-        return self.model.find_similar_items(item_id, k=k)
+        return {"recommend": recommend, "model": model}
+
+    return {"fit": fit}
 
 
-class HybridSystem:
+def create_hybrid_recommender(
+    collaborative_model: Dict[str, Callable],
+    content_model: Dict[str, Callable],
+    weights: Tuple[float, float] = (0.7, 0.3)
+) -> Dict[str, Callable]:
     """
-    Recomendador híbrido que combina filtrado colaborativo y contenido.
+    Fábrica de recomendador híbrido funcional.
+    El resultado combina resultados colaborativos y de contenido.
     """
-    def __init__(self, collaborative: CollaborativeFilter, content: ContentBased, weights=(0.7, 0.3)):
-        self.hybrid = HybridRecommender(collaborative, content, weights)
+    hybrid = HybridRecommender(
+        collaborative=collaborative_model,
+        content_based=content_model.get("model"),
+        weights=weights
+    )
 
-    def recommend(self, user_id, n_items: int = 10):
-        return self.hybrid.recommend(user_id, n=n_items)
+    def recommend(user_id, n_items=10):
+        return hybrid.recommend(user_id, n_items)
+
+    return {"recommend": recommend}
