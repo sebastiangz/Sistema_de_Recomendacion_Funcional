@@ -1,14 +1,19 @@
 """
 run_demo.py - DEMO del Sistema de Recomendación Funcional
-Usa el dataset real HR_Data_MNC_Data Science Lovers.csv
+Adaptado a la implementación REAL de collaborative.py (sin objetos, sin 'fit').
 """
 
 import pandas as pd
-from src.recommender import (
-    create_collaborative_filter,
-    create_content_based,
-    create_hybrid_recommender
+
+from src.collaborative import (
+    build_user_item_matrix,
+    user_based_recommend,
+    item_based_recommend
 )
+
+from src.matrix_factorization import svd_recommend
+from src.content_based import create_content_model
+
 
 # =========================================================
 # Configuración del dataset del proyecto
@@ -19,42 +24,63 @@ user_col = "Employee_ID"
 item_col = "Job_Title"
 text_cols = ["Location", "Performance_Rating", "Experience_Years", "Status", "Work_Mode"]
 
-# =========================================================
-# Cargar datos
-# =========================================================
+
 print("\n===== DEMO DEL SISTEMA DE RECOMENDACIÓN =====\n")
 
+# =========================================================
+# 1) Cargar datos
+# =========================================================
 df = pd.read_csv(DATASET_PATH)
 
-# Filtrar solo registros donde existan usuario e ítem
 df = df[[user_col, item_col] + text_cols].dropna()
 
-# Elegir un usuario para demo
 example_user = df[user_col].iloc[0]
 print(f"Usuario objetivo: {example_user}\n")
 
 # =========================================================
-# 1) Recomendación Colaborativa (SVD)
+# 2) Construir matriz colaborativa
 # =========================================================
-collab = create_collaborative_filter(method="svd")["fit"](df, user_col, item_col)
-print("--- Recomendaciones colaborativas (SVD) ---")
-print(collab["recommend"](example_user, 5))
+mat, user_map, item_map = build_user_item_matrix(df, user_col, item_col)
 
 # =========================================================
-# 2) Recomendación Basada en Contenido
+# 3) Recomendación colaborativa basada en usuarios
 # =========================================================
-# Creamos un DataFrame de items (puesto → atributos)
-items = df.set_index(item_col)[text_cols]
+print("--- Recomendaciones colaborativas (User-Based) ---")
+print(user_based_recommend(mat, example_user, n_recs=5))
 
-content = create_content_based(text_cols)["fit"](items)
+# =========================================================
+# 4) Recomendación por SVD
+# =========================================================
+print("\n--- Recomendaciones colaborativas (SVD) ---")
+print(svd_recommend(mat, example_user, n_recs=5))
+
+# =========================================================
+# 5) Recomendación basada en contenido
+# =========================================================
+items_df = df.set_index(item_col)[text_cols]
+content_model = create_content_model(items_df, text_cols)
+
 print("\n--- Recomendaciones basadas en contenido ---")
-print(content["recommend"](items.index[0], 5))
+print(content_model.find_similar_items(items_df.index[0], k=5))
 
 # =========================================================
-# 3) Recomendación Híbrida
+# 6) Recomendación híbrida manual (sencilla)
 # =========================================================
-hybrid = create_hybrid_recommender(collab, content)
-print("\n--- Recomendaciones híbridas ---")
-print(hybrid["recommend"](example_user, 5))
+# Fusión simple: promedio entre SVD y contenido
+print("\n--- Recomendaciones híbridas (promedio simple) ---")
+
+svd_recs = dict(svd_recommend(mat, example_user, n_recs=10))
+content_recs = dict(content_model.find_similar_items(items_df.index[0], k=10))
+
+hybrid_scores = {}
+
+for item in set(list(svd_recs.keys()) + list(content_recs.keys())):
+    hybrid_scores[item] = (
+        svd_recs.get(item, 0) * 0.7 +
+        content_recs.get(item, 0) * 0.3
+    )
+
+hybrid_sorted = sorted(hybrid_scores.items(), key=lambda x: x[1], reverse=True)
+print(hybrid_sorted[:5])
 
 print("\n===== FIN DEMO =====\n")
