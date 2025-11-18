@@ -13,23 +13,6 @@ Casos de uso específicos: Este Proyecto tiene la intención de poder ser usado 
 
 Propuesta de Valor
 
-Nuestro sistema de recomendación laboral inteligente tiene como objetivo optimizar los procesos de reclutamiento, ayudando a las empresas a encontrar trabajadores que se ajusten mejor a sus necesidades.
-Utiliza programación funcional y algoritmos de filtrado colaborativo, content-based filtering y machine learning funcional, garantizando recomendaciones precisas, consistentes y sin modificar los datos originales.
-El valor principal del proyecto está en ahorrar tiempo y recursos durante la búsqueda de talento, mejorando la coincidencia entre el perfil del candidato y los requerimientos de la empresa.
-
-Casos de Uso Reales
-- Empresas reclutadoras: pueden ingresar los criterios deseados (departamento, título, años de experiencia, modo de trabajo, salario, etc.) y recibir una lista ordenada de candidatos que se ajustan al perfil buscado.
-- Departamentos de recursos humanos: el sistema puede recomendar empleados internos para ascensos, traslados o proyectos específicos, basándose en su desempeño y experiencia.
-- Extensión futura (viceversa): con una base de datos de empresas, el mismo sistema podría recomendar vacantes a trabajadores, generando una relación bidireccional entre talento y oportunidad.
-
-Métricas de Negocio Esperadas
-- Precisión de recomendación: lograr un acierto del 80 % o más en coincidencia entre el perfil recomendado y los criterios de la empresa.
-- Reducción del tiempo de búsqueda: disminuir en hasta un 40 % el tiempo promedio que toma encontrar candidatos adecuados.
-- Satisfacción del usuario: alcanzar una tasa de 90 % de aceptación por parte de los reclutadores al evaluar las recomendaciones generadas.
-- Escalabilidad: permitir que el sistema maneje miles de perfiles y vacantes sin afectar el rendimiento.
-
-
-
 **Universidad de Colima - Ingeniería en Computación Inteligente**  
 **Materia**: Programación Funcional  
 **Profesor**: Gonzalez Zepeda Sebastian  
@@ -539,19 +522,20 @@ pytest tests/test_performance.py
 
 ## 💼 Componente de Emprendimiento
 
-**Aplicación Real**: Motor de recomendaciones para e-commerce
+Nuestro sistema de recomendación laboral inteligente tiene como objetivo optimizar los procesos de reclutamiento, ayudando a las empresas a encontrar trabajadores que se ajusten mejor a sus necesidades.
+Utiliza programación funcional y algoritmos de filtrado colaborativo, content-based filtering y machine learning funcional, garantizando recomendaciones precisas, consistentes y sin modificar los datos originales.
+El valor principal del proyecto está en ahorrar tiempo y recursos durante la búsqueda de talento, mejorando la coincidencia entre el perfil del candidato y los requerimientos de la empresa.
 
-**Propuesta de Valor**:
-- Aumento del 30% en conversión
-- Personalización en tiempo real
-- API simple y escalable
-- Explicabilidad de recomendaciones
+Casos de Uso Reales
+- Empresas reclutadoras: pueden ingresar los criterios deseados (departamento, título, años de experiencia, modo de trabajo, salario, etc.) y recibir una lista ordenada de candidatos que se ajustan al perfil buscado.
+- Departamentos de recursos humanos: el sistema puede recomendar empleados internos para ascensos, traslados o proyectos específicos, basándose en su desempeño y experiencia.
+- Extensión futura (viceversa): con una base de datos de empresas, el mismo sistema podría recomendar vacantes a trabajadores, generando una relación bidireccional entre talento y oportunidad.
 
-**Casos de Uso**:
-- E-commerce
-- Streaming (música, video)
-- News aggregation
-- Social networks
+Métricas de Negocio Esperadas
+- Precisión de recomendación: lograr un acierto del 80 % o más en coincidencia entre el perfil recomendado y los criterios de la empresa.
+- Reducción del tiempo de búsqueda: disminuir en hasta un 40 % el tiempo promedio que toma encontrar candidatos adecuados.
+- Satisfacción del usuario: alcanzar una tasa de 90 % de aceptación por parte de los reclutadores al evaluar las recomendaciones generadas.
+- Escalabilidad: permitir que el sistema maneje miles de perfiles y vacantes sin afectar el rendimiento.
 
 ---
 
@@ -579,6 +563,7 @@ pytest tests/test_performance.py
 
 **Nombres**: 
 David Isaac Avalos Díaz
+Diego Alejandro Díaz Cuevas
 Osmar Antonio Isais Virgen
 
 **Email**: 
