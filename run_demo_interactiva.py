@@ -1,6 +1,6 @@
 """
 DEMO REAL (versión interactiva):
-Recomendar empleados similares a un TRABAJO elegido por el usuario que vivan en un PAÍS elegido.
+Recomendar empleados similares a un NOMBRE ingresado por el usuario.
 
 Dataset: HR_Data_MNC_Data Science Lovers.csv
 """
@@ -16,19 +16,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 DATASET_PATH = "HR_Data_MNC_Data Science Lovers.csv"
 
 user_col = "Employee_ID"
-item_col = "Job_Title"
-
-# Columnas para construir las características
-text_cols = [
-    "Full_Name",
-    "Department",
-    "Job_Title",
-    "Location",
-    "Performance_Rating",
-    "Experience_Years",
-    "Status",
-    "Work_Mode",
-]
+name_col = "Full_Name"
 
 # ===============================
 # CARGA DE DATOS
@@ -36,62 +24,53 @@ text_cols = [
 df = pd.read_csv(DATASET_PATH)
 
 # Limpieza básica
-df = df.dropna(subset=[item_col, "Location"])
+df[name_col] = df[name_col].astype(str).str.strip()
 df[user_col] = df[user_col].astype(str).str.strip()
+
+print("\n===== Sistema de Recomendación por Nombre =====\n")
+print("Vista previa del dataset:\n")
+print(df[[user_col, name_col]].head(), "\n")
 
 # ===============================
 # ENTRADA DEL USUARIO
 # ===============================
+query_name = input("🧍 Ingresa el nombre a buscar (o parte del nombre): ").strip()
 
-print("\n===== Sistema de Recomendación de Empleados =====\n")
-
-target_country = input("🏳️ Ingrese el país donde buscar empleados: ").strip()
-target_job = input("💼 Ingrese el trabajo a buscar (ej: Software Engineer): ").strip()
-
-print(f"\n===== DEMO: Recomendar empleados similares a '{target_job}' en {target_country} =====\n")
+print(f"\n===== DEMO: Buscando empleados similares a '{query_name}' =====\n")
 
 # ===============================
-# FILTRAR POR PAÍS
+# MODELO CONTENT-BASED (solo nombres)
 # ===============================
+items = df.set_index(user_col)[[name_col]]
 
-df_country = df[df["Location"].str.contains(target_country, case=False, na=False)]
-
-if df_country.empty:
-    raise ValueError(f"❌ No hay empleados registrados en {target_country}.")
-
-# ===============================
-# MODELO CONTENT-BASED
-# ===============================
-items = df_country.set_index(user_col)[text_cols]
-
-content_model = create_content_model(items, text_cols)
-
-# Buscar empleados del trabajo objetivo
-matching_employees = df_country[df_country["Job_Title"].str.contains(target_job, case=False, na=False)]
+# Crear modelo real con tus funciones
+content_model = create_content_model(items, [name_col])
 
 # ===============================
-# PERFIL OBJETIVO
+# Encontrar empleados cuyo nombre contiene lo buscado
 # ===============================
-if matching_employees.empty:
-    print(f"⚠ No existen '{target_job}' en {target_country}. Buscando perfil global...\n")
-    fallback = df[df["Job_Title"].str.contains(target_job, case=False, na=False)]
+matching = df[df[name_col].str.contains(query_name, case=False, na=False)]
 
-    if fallback.empty:
-        raise ValueError(f"❌ No existe el trabajo '{target_job}' en ningún país del dataset.")
-
-    example = fallback.iloc[0]
+if matching.empty:
+    print(f"⚠ No se encontraron nombres similares directamente. Se usará búsqueda semántica.\n")
+    # Creamos un "perfil" basado SOLO en el nombre ingresado
+    profile_vector_text = query_name
 else:
-    example = matching_employees.iloc[0]
+    # Usamos el primer empleado encontrado como referencia
+    example = matching.iloc[0]
+    profile_vector_text = example[name_col]
 
-profile_vector = " ".join(str(example[col]) for col in text_cols)
+print(f"Nombre de referencia: {profile_vector_text}\n")
 
 # ===============================
 # TF-IDF
 # ===============================
 vectorizer = TfidfVectorizer(max_features=300)
 
-tfidf_matrix = vectorizer.fit_transform(items.apply(lambda r: " ".join(r.values.astype(str)), axis=1))
-target_vector = vectorizer.transform([profile_vector]).toarray()[0]
+# Vectorizamos únicamente la columna "Full_Name"
+tfidf_matrix = vectorizer.fit_transform(items[name_col])
+
+target_vector = vectorizer.transform([profile_vector_text]).toarray()[0]
 
 # ===============================
 # CALCULAR SIMILITUD
@@ -104,9 +83,9 @@ for emp_id, vec in zip(items.index, tfidf_matrix.toarray()):
 # Ordenar
 ranked = sorted(similarities, key=lambda x: x[1], reverse=True)[:10]
 
-print(f"Top candidatos similares a {target_job} en {target_country}:\n")
+print(f"Top empleados con nombre similar a '{query_name}':\n")
 for emp_id, score in ranked:
     row = df.loc[df[user_col] == emp_id].iloc[0]
-    print(f"- {row['Full_Name']} | {row['Job_Title']} | Score={score:.3f}")
+    print(f"- {row['Full_Name']} | Score={score:.3f}")
 
 print("\n===== FIN DEL DEMO REAL =====\n")
