@@ -1,6 +1,6 @@
 """
 DEMO: Búsqueda de empleados por nombre dentro del dataset
-Permite escribir un nombre (completo o parcial) y devuelve TODOS sus datos.
+Ahora el usuario puede elegir cuántos empleados mostrar.
 """
 
 import pandas as pd
@@ -17,25 +17,42 @@ df = pd.read_csv(DATASET_PATH)
 
 print("\n===== BÚSQUEDA DE EMPLEADOS POR NOMBRE =====\n")
 
-# Mostrar primeras filas para el usuario
+# Mostrar primeras filas del dataset
 print("Vista inicial del dataset:\n")
 print(df.head(), "\n")
 
 # ===============================
-# BÚSQUEDA POR NOMBRE
+# BUSCAR POR NOMBRE
 # ===============================
 
-# Pedir nombre al usuario
+# Pedir nombre a buscar
 nombre = input("Ingresa el nombre (o parte del nombre) a buscar: ").strip()
 
-# Filtrar coincidencias (case insensitive)
+# Pedir cantidad máxima de resultados
+while True:
+    try:
+        limite = int(input("¿Cuántos empleados deseas mostrar? (ej: 1, 5, 10): "))
+        if limite > 0:
+            break
+        else:
+            print("Por favor ingresa un número mayor que 0.")
+    except ValueError:
+        print("Valor inválido. Ingresa un número entero.")
+
+# Buscar coincidencias (case insensitive)
 coincidencias = df[df["Full_Name"].str.contains(nombre, case=False, na=False)]
 
-# Mostrar resultados
+# Limitar resultados
+coincidencias = coincidencias.head(limite)
+
+# ===============================
+# MOSTRAR RESULTADOS
+# ===============================
+
 if coincidencias.empty:
     print("\n❌ No se encontró ningún empleado con ese nombre.")
 else:
-    print(f"\n✔ Empleados encontrados ({len(coincidencias)} resultados):\n")
+    print(f"\n✔ Empleados encontrados (mostrando máximo {limite}):\n")
     for idx, row in coincidencias.iterrows():
         print("--------------------------------------------------")
         print(f"Employee ID:       {row['Employee_ID']}")
