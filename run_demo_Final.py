@@ -136,6 +136,6 @@ print(f"\n===== TOP {top_k} EMPLEADOS SIMILARES =====\n")
 for emp_id, score in ranked:
     row = df[df[user_col] == emp_id].iloc[0]
     print(f"- {row['Full_Name']} | {row['Job_Title']} | Rating: {row['Performance_Rating']} | "
-          f"Años Exp: {row['Experience_Years']} | Score={score:.3f}")
+          f"Años Exp: {row['Experience_Years']} | Similarity={score:.3f}")
 
 print("\n===== FIN DEL DEMO =====\n")
