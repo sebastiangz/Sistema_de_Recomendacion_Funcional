@@ -2,16 +2,15 @@
 DEMO INTERACTIVO:
 Buscar empleados por nombre dentro del dataset y mostrar TODOS sus datos.
 
-Usa módulos del proyecto en src/ y mantiene el mismo formato
-que las otras demos interactivas.
-
-Dataset: HR_Data_MNC_Data Science Lovers.csv
+Incluye temporizadores para:
+- Carga de datos
+- Limpieza
+- Búsqueda
+- Tiempo total del demo
 """
 
+import time
 import pandas as pd
-from src.similarity import cosine_similarity   
-from src.content_based import create_content_model  
-from src.recommender import create_content_based   
 
 # ===============================
 # CONFIGURACIÓN
@@ -21,13 +20,29 @@ DATASET_PATH = "HR_Data_MNC_Data Science Lovers.csv"
 print("\n===== SISTEMA DE BÚSQUEDA DE EMPLEADOS POR NOMBRE =====\n")
 
 # ===============================
+# CRONÓMETRO TOTAL
+# ===============================
+t_total_start = time.perf_counter()
+
+# ===============================
 # CARGA DE DATOS
 # ===============================
+t_load = time.perf_counter()
 df = pd.read_csv(DATASET_PATH)
+t_load_end = time.perf_counter()
 
-# Limpieza mínima
+print(f"⏱ Tiempo carga del dataset: {t_load_end - t_load:.4f} s\n")
+
+# ===============================
+# LIMPIEZA DE DATOS
+# ===============================
+t_clean = time.perf_counter()
+
 df["Employee_ID"] = df["Employee_ID"].astype(str).str.strip()
 df["Full_Name"] = df["Full_Name"].astype(str).str.strip()
+
+t_clean_end = time.perf_counter()
+print(f"⏱ Tiempo limpieza de datos: {t_clean_end - t_clean:.4f} s\n")
 
 print("Vista inicial del dataset:\n")
 print(df.head(), "\n")
@@ -37,7 +52,6 @@ print(df.head(), "\n")
 # ===============================
 nombre_buscar = input("🔎 Ingresa el nombre (o parte del nombre) del empleado: ").strip()
 
-# Validación del límite
 while True:
     try:
         limite = int(input("📌 ¿Cuántos empleados deseas mostrar? (ej: 1, 5, 10): "))
@@ -51,13 +65,15 @@ while True:
 print("\n===== BUSCANDO EMPLEADOS... =====\n")
 
 # ===============================
-# BÚSQUEDA DE COINCIDENCIAS
+# BÚSQUEDA
 # ===============================
+t_search = time.perf_counter()
 
 coincidencias = df[df["Full_Name"].str.contains(nombre_buscar, case=False, na=False)]
-
-# Limitar resultados
 coincidencias = coincidencias.head(limite)
+
+t_search_end = time.perf_counter()
+print(f"⏱ Tiempo búsqueda: {t_search_end - t_search:.4f} s\n")
 
 # ===============================
 # RESULTADOS
@@ -67,6 +83,8 @@ if coincidencias.empty:
 else:
     print(f"✔ Se encontraron {len(coincidencias)} empleados.\n")
     print("===== RESULTADOS =====\n")
+
+    t_print = time.perf_counter()
 
     for _, row in coincidencias.iterrows():
         print("--------------------------------------------------")
@@ -82,5 +100,14 @@ else:
         print(f"Modalidad trabajo:   {row['Work_Mode']}")
         print(f"Salario (INR):       {row['Salary_INR']}")
         print("--------------------------------------------------")
+
+    t_print_end = time.perf_counter()
+    print(f"\n⏱ Tiempo impresión resultados: {t_print_end - t_print:.4f} s\n")
+
+# ===============================
+# TIEMPO TOTAL
+# ===============================
+t_total_end = time.perf_counter()
+print(f"⏱ Tiempo total del demo: {t_total_end - t_total_start:.4f} s")
 
 print("\n===== FIN DEL DEMO =====\n")
