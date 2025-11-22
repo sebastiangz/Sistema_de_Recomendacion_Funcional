@@ -133,7 +133,7 @@ for emp_id, score in ranked:
     print(
         f"- {row['Full_Name']} | {row['Job_Title']} | "
         f"Rating: {row['Performance_Rating']} | "
-        f"Años Exp: {row['Experience_Years']} | Similaridad={score:.3f}"
+        f"Años Exp: {row['Experience_Years']} | Similitud={score:.3f}"
     )
 
 t_total_end = time.perf_counter()
