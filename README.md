@@ -1,5 +1,5 @@
 # 🎯 Proyecto 9: Sistema de Recomendación Funcional
-Link Video: https://youtu.be/Jh7GLCmWnNk
+Link Video: https://youtu.be/eYXzVgoYHHc
 
 ## 📋 Descripción del Proyecto
 
