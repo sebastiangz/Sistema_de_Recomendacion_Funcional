@@ -45,20 +45,6 @@ Propuesta de Valor
 
 ---
 
-## 📦 Instalación
-
-```bash
-# Clonar el repositorio
-git clone https://github.com/sebastiangz/Sistema_de_Recomendacion_Funcional.git
-cd SISTEMA_DE_RECOMENDACION_FUNCIONAL
-
-# Crear entorno virtual
-python -m venv venv
-source venv/bin/activate
-
-# Instalar dependencias
-pip install -r requirements.txt
-```
 
 ### requirements.txt
 ```
