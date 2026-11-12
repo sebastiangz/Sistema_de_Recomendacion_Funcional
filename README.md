@@ -563,14 +563,14 @@ Métricas de Negocio Esperadas
 ## 👥 Autor
 
 **Nombres**: 
-David Isaac Avalos Díaz
-Diego Alejandro Díaz Cuevas
-Osmar Antonio Isais Virgen
+- José Leonardo Silva Galván
+- Humberto Federico Mendoza Flores
+- Sahid Alejandro Magaña Chavez
 
 **Email**: 
-osmarisais57@gmail.com 
-diegoalxdiaz@outlook.com  
-davalos16@ucol.mx
+leonardosiga21@gmail.com 
+humbert07fmf@gmail.com  
+smagana12@ucol.mx
 
 **GitHub**: 
 https://github.com/ninja-1-droid
