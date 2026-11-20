@@ -3,18 +3,13 @@ from src.funciones_sahid import (
     get_user_top_items,
     recommend_unrated_items
 )
-from src.cargar_datos import load_ratings, build_matrix
-from src.collaborative import (
-    UserItemMatrix,
-    collaborative_filter_predict
-)
+from src.cargar_datos import load_ratings, build_matrix, predecir
 
 
 @pytest.fixture(scope="module")
 def matriz():
     ratings = load_ratings("data/processed/ratings.csv")
-    datos, user_ids, item_ids = build_matrix(ratings)
-    return UserItemMatrix(datos, user_ids, item_ids)
+    return build_matrix(ratings)
 
 
 def test_elementos_favoritos(matriz):
@@ -39,8 +34,7 @@ def test_recomendaciones_nuevas(matriz):
     usuario = matriz.user_ids[0]
 
     resultado = recommend_unrated_items(
-        matriz, usuario, n=5, k=10,
-        predict_fn=collaborative_filter_predict
+        matriz, usuario, n=5, k=10, predict_fn=predecir
     )
 
     assert len(resultado) == 5
@@ -59,8 +53,7 @@ def test_limite_recomendaciones(matriz):
     usuario = matriz.user_ids[0]
 
     resultado = recommend_unrated_items(
-        matriz, usuario, n=1, k=10,
-        predict_fn=collaborative_filter_predict
+        matriz, usuario, n=1, k=10, predict_fn=predecir
     )
 
     assert len(resultado) == 1
