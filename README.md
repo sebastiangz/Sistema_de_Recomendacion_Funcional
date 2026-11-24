@@ -559,9 +559,9 @@ humbert07fmf@gmail.com
 smagana12@ucol.mx
 
 **GitHub**: 
-https://github.com/ninja-1-droid
-https://github.com/Daxed64
-https://github.com/osmar433
+https://github.com/leonardosiga21-glitch
+https://github.com/humbert07fmf-a11y
+https://github.com/smagana12
 
 
 ---
