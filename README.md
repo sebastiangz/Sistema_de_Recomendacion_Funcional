@@ -1,5 +1,5 @@
 # 🎯 Proyecto 9: Sistema de Recomendación Funcional
-Link Video: https://youtu.be/eYXzVgoYHHc
+Link Video: https://youtu.be/-h_ID1LWBWU?si=ALfErvsTS0MBjNSw
 
 ## 📋 Descripción del Proyecto
 
@@ -17,7 +17,7 @@ Propuesta de Valor
 **Universidad de Colima - Ingeniería en Computación Inteligente**  
 **Materia**: Programación Funcional  
 **Profesor**: Gonzalez Zepeda Sebastian  
-**Semestre**: Agosto 2025 - Enero 2026
+**Semestre**: Agosto 2026 - Enero 2027
 
 ---
 
